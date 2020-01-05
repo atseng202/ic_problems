@@ -3,6 +3,7 @@
 # and returns the maximum monetary value the duffel bag can hold.
 import unittest
 
+# Improve solution to keep track of maximum and avoid creating extra space
 def max_duffel_bag_value(cake_tuples, weight_capacity, index = 0, memo = {}):
   key = (weight_capacity, index)
   if key in memo:
@@ -10,7 +11,8 @@ def max_duffel_bag_value(cake_tuples, weight_capacity, index = 0, memo = {}):
   if weight_capacity <= 0:
     return 0
 
-  cake_values = []
+  # cake_values = []
+  current_max_value = None
   for idx in range(index, len(cake_tuples)):
     cake_tuple = cake_tuples[idx]
     weight = cake_tuple[0]
@@ -23,18 +25,21 @@ def max_duffel_bag_value(cake_tuples, weight_capacity, index = 0, memo = {}):
       continue
     elif weight_capacity - weight >= 0: 
       current_sum = value + max_duffel_bag_value(cake_tuples, weight_capacity - weight, idx, memo)
+      if current_max_value:
+        current_max_value = max(current_max_value, current_sum)
+      else:
+        current_max_value = current_sum
+
       cake_values.append(current_sum)
     else:
       continue
-  
-  if len(cake_values):
-    max_val = max(cake_values)
-    memo[key] = max_val
-    # print(memo)
-    return memo[key]
+
+  if current_max_value:
+    memo[key] = current_max_value
+    return current_max_value
   else:
-		memo[key] = 0
-		return 0
+    memo[key] = 0
+    return 0  
 
 class Test(unittest.TestCase):
   def setUp(self):
